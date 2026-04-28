@@ -43,7 +43,7 @@ def text_to_speech():
         lang = data.get('lang', 'vi')  # Default to Vietnamese
         slow = data.get('slow', False)
         
-        print(f"📝 TTS Request: text='{text[:50]}...', lang={lang}, slow={slow}")
+        print(f"TTS Request: text='{text[:50]}...', lang={lang}, slow={slow}")
         
         if not text:
             return jsonify({'success': False, 'error': 'No text provided'}), 400
@@ -52,13 +52,13 @@ def text_to_speech():
         filename = f'{uuid.uuid4()}.mp3'
         filepath = AUDIO_DIR / filename
         
-        print(f"🎤 Generating audio: {filename}")
+        print(f"Generating audio: {filename}")
         
         # Generate speech
         tts = gTTS(text=text, lang=lang, slow=slow)
         tts.save(str(filepath))
         
-        print(f"✅ Audio generated: {filepath}")
+        print(f"Audio generated: {filepath}")
         
         # Cleanup old files
         cleanup_old_files()
@@ -70,7 +70,7 @@ def text_to_speech():
         }), 200
     
     except Exception as e:
-        print(f"❌ Error in text_to_speech: {str(e)}")
+        print(f"Error in text_to_speech: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -122,13 +122,13 @@ def index():
 def health_check():
     if request.method == 'OPTIONS':
         return '', 204
-    print("✅ Health check called")
+    print("Health check called")
     return jsonify({'status': 'ok', 'service': 'TAYVOICE TTS API'}), 200
 
 if __name__ == '__main__':
-    print('🚀 TAYVOICE TTS Server starting...')
-    print('📍 Server running at: http://localhost:5000')
-    print('🎤 API endpoint: http://localhost:5000/api/tts')
-    print('✅ Vietnamese TTS ready!')
+    print('Server starting...')
+    print('Server running at: http://localhost:5000')
+    print('API endpoint: http://localhost:5000/api/tts')
+    print('Vietnamese TTS ready!')
     print('')
     app.run(host='0.0.0.0', port=5000, debug=True)
