@@ -458,6 +458,7 @@ button:disabled {
     text-overflow: ellipsis;
     white-space: nowrap;
     margin-bottom: 0.25rem;
+    max-width: 100%;
 }
 
 .history-meta {
@@ -532,7 +533,7 @@ button:disabled {
 .footer .container {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-sm);
 }
 
 .footer-content {
@@ -594,7 +595,7 @@ button:disabled {
 
 .footer-bottom {
     border-top: 1px solid rgba(0,0,0,0.05);
-    padding-top: var(--spacing-md);
+    padding-top: var(--spacing-sm);
     text-align: center;
 }
 
@@ -605,22 +606,52 @@ button:disabled {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .header .container {
-        flex-direction: column;
-        gap: var(--spacing-md);
+    .header {
+        padding: var(--spacing-sm) 0;
+    }
+
+    .logo h1 {
+        font-size: 1.25rem;
     }
 
     .controls-grid {
         grid-template-columns: 1fr;
     }
 
-    .action-buttons {
-        flex-direction: column;
+    /* Quick actions: 2 buttons per row */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
     }
 
-    .btn-primary,
-    .btn-secondary {
+    .quick-actions .btn-secondary {
         width: 100%;
+        justify-content: center;
+        padding: 0.75rem 0.5rem; /* Giảm padding ngang để chữ có nhiều chỗ hơn */
+        font-size: 0.875rem;     /* Giảm nhẹ font size để vừa màn hình nhỏ */
+        text-align: center;
+    }
+
+    .btn-secondary svg, 
+    .btn-primary svg {
+        flex-shrink: 0; /* Không cho icon bị bẹp */
+    }
+
+    /* Action buttons: speak full width, stop+download side by side */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .action-buttons .btn-primary {
+        flex: 0 0 100%;
+        justify-content: center;
+    }
+
+    .action-buttons .btn-secondary {
+        flex: 1 1 auto;
         justify-content: center;
     }
 
@@ -630,9 +661,31 @@ button:disabled {
         gap: var(--spacing-sm);
     }
 
+    /* Cho phép text lịch sử xuống hàng thay vì cắt */
+    .history-text {
+        white-space: normal;
+        word-break: break-word;
+        overflow: visible;
+        text-overflow: unset;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
     .history-actions {
         width: 100%;
         justify-content: flex-end;
+    }
+
+    /* Căn giữa toàn bộ layout trên mobile */
+    .main-content .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .card {
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .footer-content {
@@ -640,13 +693,12 @@ button:disabled {
         text-align: center;
         align-items: center;
     }
-    
+
     .footer-team {
-        flex-direction: column;
-        gap: var(--spacing-sm);
+        justify-content: center;
     }
-    
-    .team-members {
+
+    .footer-brand {
         justify-content: center;
     }
 }

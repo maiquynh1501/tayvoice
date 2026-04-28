@@ -9,6 +9,10 @@ const charCount = document.getElementById('charCount');
 const voiceSelect = document.getElementById('voiceSelect');
 const speedSlider = document.getElementById('speedSlider');
 const speedValue = document.getElementById('speedValue');
+const pitchSlider = document.getElementById('pitchSlider');
+const pitchValue = document.getElementById('pitchValue');
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeValue = document.getElementById('volumeValue');
 
 const speakBtn = document.getElementById('speakBtn');
 const stopBtn = document.getElementById('stopBtn');
@@ -16,6 +20,8 @@ const downloadBtn = document.getElementById('downloadBtn');
 const clearBtn = document.getElementById('clearBtn');
 const pasteBtn = document.getElementById('pasteBtn');
 const sampleBtn = document.getElementById('sampleBtn');
+const openFileBtn = document.getElementById('openFileBtn');
+const fileInput = document.getElementById('fileInput');
 
 const historyList = document.getElementById('historyList');
 const clearHistoryBtn = document.getElementById('clearHistoryBtn');
@@ -125,6 +131,10 @@ function playAudio(url, filename) {
 
     currentAudio = new Audio(url);
     currentAudio.playbackRate = parseFloat(speedSlider.value);
+    
+    if (volumeSlider) {
+        currentAudio.volume = parseFloat(volumeSlider.value) / 100;
+    }
 
     currentAudio.onplay = () => {
         isPlaying = true;
@@ -342,7 +352,9 @@ function updateCharCount() {
 }
 
 function updateSliderValues() {
-    speedValue.textContent = speedSlider.value;
+    if (speedValue && speedSlider) speedValue.textContent = speedSlider.value;
+    if (pitchValue && pitchSlider) pitchValue.textContent = pitchSlider.value;
+    if (volumeValue && volumeSlider) volumeValue.textContent = volumeSlider.value;
 }
 
 function clearText() {
@@ -365,6 +377,22 @@ function loadSampleText() {
     const randomIndex = Math.floor(Math.random() * sampleTexts.length);
     textInput.value = sampleTexts[randomIndex];
     updateCharCount();
+}
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            textInput.value = e.target.result;
+            updateCharCount();
+        };
+        reader.onerror = function() {
+            alert('Không thể đọc file. Vui lòng thử lại.');
+        };
+        reader.readAsText(file);
+    }
+    event.target.value = '';
 }
 
 function escapeHtml(text) {
@@ -394,12 +422,27 @@ function formatTimestamp(timestamp) {
 // ==================== Event Listeners ====================
 function setupEventListeners() {
     textInput.addEventListener('input', updateCharCount);
-    speedSlider.addEventListener('input', () => {
-        updateSliderValues();
-        if (currentAudio) {
-            currentAudio.playbackRate = parseFloat(speedSlider.value);
-        }
-    });
+    if (speedSlider) {
+        speedSlider.addEventListener('input', () => {
+            updateSliderValues();
+            if (currentAudio) {
+                currentAudio.playbackRate = parseFloat(speedSlider.value);
+            }
+        });
+    }
+
+    if (pitchSlider) {
+        pitchSlider.addEventListener('input', updateSliderValues);
+    }
+
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', () => {
+            updateSliderValues();
+            if (currentAudio) {
+                currentAudio.volume = parseFloat(volumeSlider.value) / 100;
+            }
+        });
+    }
 
     speakBtn.addEventListener('click', speak);
     stopBtn.addEventListener('click', stopAudio);
@@ -407,6 +450,11 @@ function setupEventListeners() {
     clearBtn.addEventListener('click', clearText);
     pasteBtn.addEventListener('click', pasteText);
     sampleBtn.addEventListener('click', loadSampleText);
+
+    if (openFileBtn && fileInput) {
+        openFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+    }
 
     clearHistoryBtn.addEventListener('click', clearHistory);
 
@@ -424,11 +472,20 @@ function setupEventListeners() {
 }
 
 // ==================== Speed Control Updates ====================
-speedSlider.addEventListener('change', () => {
-    if (currentAudio) {
-        currentAudio.playbackRate = parseFloat(speedSlider.value);
-    }
-});
+if (speedSlider) {
+    speedSlider.addEventListener('change', () => {
+        if (currentAudio) {
+            currentAudio.playbackRate = parseFloat(speedSlider.value);
+        }
+    });
+}
+if (volumeSlider) {
+    volumeSlider.addEventListener('change', () => {
+        if (currentAudio) {
+            currentAudio.volume = parseFloat(volumeSlider.value) / 100;
+        }
+    });
+}
 
 // ==================== Initialize App ====================
 document.addEventListener('DOMContentLoaded', init);
